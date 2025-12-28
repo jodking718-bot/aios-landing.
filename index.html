@@ -6,12 +6,22 @@
     <title>AIOS - The Local AI Operating System</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest"></script>
     <style>
         body { font-family: 'JetBrains Mono', monospace; }
         .grid-bg {
             background-image: linear-gradient(#111 1px, transparent 1px), linear-gradient(90deg, #111 1px, transparent 1px);
             background-size: 30px 30px;
         }
+        .cursor-blink {
+            animation: blink 1s step-end infinite;
+        }
+        @keyframes blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0; }
+        }
+        /* Hide scrollbar for clean modal look */
+        .no-scroll { overflow: hidden; }
     </style>
 </head>
 <body class="bg-black text-gray-300 min-h-screen relative overflow-x-hidden selection:bg-green-900 selection:text-white">
@@ -45,17 +55,13 @@
             </h1>
 
             <p class="text-lg md:text-xl text-gray-500 mb-10 max-w-2xl leading-relaxed">
-                Stop pasting code. AIOS is a local-first agent that controls your terminal to <span class="text-gray-300">build apps</span>, <span class="text-gray-300">fix dependencies</span>, and <span class="text-gray-300">manage files</span>.
+                <span class="text-green-500">> Generative AI. Native Execution. Zero Setup Hell.</span>
                 <br><br>
-                <span class="text-green-500">> Powered by LLMs. Executed Locally. 100% OS Control.</span>
-
-        
+                Stop pasting code. AIOS is a local-first agent that controls your terminal to <span class="text-gray-300">build apps</span>, <span class="text-gray-300">fix dependencies</span>, and <span class="text-gray-300">manage files</span>.
             </p>
 
             <!-- 
-               FORMSPREE SECTION
-               1. Replace 'https://formspree.io/f/mpqzdjdb' with your link from https://formspree.io/
-               2. Example: action="https://formspree.io/f/mqkrzyxw"
+               IMPORTANT: REPLACE 'YOUR_FORMSPREE_URL_HERE' WITH YOUR REAL LINK 
             -->
             <form action="https://formspree.io/f/mpqzdjdb" method="POST" class="flex flex-col sm:flex-row gap-4 max-w-md mb-8">
                 <input 
@@ -83,23 +89,175 @@
             </div>
         </div>
 
-        <!-- Product Features Grid -->
+        <!-- Interactive Feature Grid -->
         <div class="grid md:grid-cols-3 gap-6 mt-32 border-t border-white/10 pt-16">
-            <div class="p-6 rounded-xl bg-white/5 border border-white/5">
-                <h3 class="text-white font-bold mb-2 text-lg">🛡️ Security Sandbox</h3>
-                <p class="text-gray-500 text-sm">Safe 'sudo' access. We parse every command before execution to prevent system damage.</p>
-            </div>
-            <div class="p-6 rounded-xl bg-white/5 border border-white/5">
-    <h3 class="text-white font-bold mb-2 text-lg">🧠 Cloud Brain, Local Body</h3>
-    <p class="text-gray-500 text-sm">We use powerful LLMs (OpenAI/Gemini) for reasoning, but execute the code locally on your machine.</p>
-            </div>
             
-            <div class="p-6 rounded-xl bg-white/5 border border-white/5">
-                <h3 class="text-white font-bold mb-2 text-lg">🔧 Dependency Fixer</h3>
-                <p class="text-gray-500 text-sm">Auto-detects and resolves missing drivers, node modules, and python errors.</p>
+            <!-- Card 1: Security -->
+            <div onclick="openModal('security')" class="group p-6 rounded-xl bg-white/5 border border-white/5 hover:border-green-500/50 hover:bg-green-500/5 transition-all cursor-pointer relative overflow-hidden">
+                <div class="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                    <i data-lucide="maximize-2" class="w-4 h-4 text-green-500"></i>
+                </div>
+                <h3 class="text-white font-bold mb-2 text-lg flex items-center gap-2">
+                    <i data-lucide="shield" class="w-5 h-5 text-green-500"></i> Security Sandbox
+                </h3>
+                <p class="text-gray-500 text-sm">Safe 'sudo' access. We parse commands before execution.</p>
+            </div>
+
+            <!-- Card 2: Cloud Brain -->
+            <div onclick="openModal('brain')" class="group p-6 rounded-xl bg-white/5 border border-white/5 hover:border-green-500/50 hover:bg-green-500/5 transition-all cursor-pointer relative overflow-hidden">
+                <div class="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                    <i data-lucide="maximize-2" class="w-4 h-4 text-green-500"></i>
+                </div>
+                <h3 class="text-white font-bold mb-2 text-lg flex items-center gap-2">
+                    <i data-lucide="brain" class="w-5 h-5 text-green-500"></i> Cloud Brain, Local Body
+                </h3>
+                <p class="text-gray-500 text-sm">Top-tier LLMs for reasoning, local execution for control.</p>
+            </div>
+
+            <!-- Card 3: Dependencies -->
+            <div onclick="openModal('deps')" class="group p-6 rounded-xl bg-white/5 border border-white/5 hover:border-green-500/50 hover:bg-green-500/5 transition-all cursor-pointer relative overflow-hidden">
+                <div class="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                    <i data-lucide="maximize-2" class="w-4 h-4 text-green-500"></i>
+                </div>
+                <h3 class="text-white font-bold mb-2 text-lg flex items-center gap-2">
+                    <i data-lucide="wrench" class="w-5 h-5 text-green-500"></i> Dependency Fixer
+                </h3>
+                <p class="text-gray-500 text-sm">Auto-resolves missing drivers and node modules.</p>
             </div>
         </div>
 
     </div>
+
+    <!-- The Pop-up Modal (Hidden by default) -->
+    <div id="modal" class="fixed inset-0 z-50 hidden flex items-center justify-center px-4">
+        <!-- Backdrop -->
+        <div onclick="closeModal()" class="absolute inset-0 bg-black/80 backdrop-blur-sm transition-opacity"></div>
+        
+        <!-- Terminal Window -->
+        <div class="relative bg-black border border-green-500/30 rounded-lg w-full max-w-lg shadow-2xl shadow-green-900/20 transform transition-all scale-95 opacity-0" id="modal-content">
+            
+            <!-- Window Header -->
+            <div class="flex items-center justify-between px-4 py-3 border-b border-green-500/20 bg-green-900/10 rounded-t-lg">
+                <div class="flex gap-2">
+                    <div class="w-3 h-3 rounded-full bg-red-500/50"></div>
+                    <div class="w-3 h-3 rounded-full bg-yellow-500/50"></div>
+                    <div class="w-3 h-3 rounded-full bg-green-500/50"></div>
+                </div>
+                <div class="text-xs font-mono text-green-500/70" id="modal-title">system_check.exe</div>
+                <button onclick="closeModal()" class="text-gray-500 hover:text-white transition-colors">
+                    <i data-lucide="x" class="w-4 h-4"></i>
+                </button>
+            </div>
+
+            <!-- Window Body -->
+            <div class="p-6 font-mono text-sm">
+                <div class="text-green-500 mb-4" id="modal-text">
+                    <!-- Text inserted via JS -->
+                </div>
+                <div class="mt-6 flex justify-end">
+                    <button onclick="closeModal()" class="px-4 py-2 bg-green-900/20 border border-green-500/30 text-green-400 rounded hover:bg-green-500/20 transition-colors text-xs">
+                        CLOSE_SESSION
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Initialize Icons
+        lucide.createIcons();
+
+        // Modal Logic
+        const modal = document.getElementById('modal');
+        const modalContent = document.getElementById('modal-content');
+        const modalText = document.getElementById('modal-text');
+        const modalTitle = document.getElementById('modal-title');
+
+        const contentMap = {
+            'security': {
+                title: 'sandbox_monitor.sh',
+                text: [
+                    "> Initializing Security Layer...",
+                    "> Parsing shell intent...",
+                    "> COMMAND: 'rm -rf /'",
+                    "> STATUS: BLOCKED [Unsafe Operation]",
+                    "> COMMAND: 'npm install react'",
+                    "> STATUS: ALLOWED [Safe]",
+                    "> Sandbox Active. System Secure."
+                ]
+            },
+            'brain': {
+                title: 'neural_bridge.py',
+                text: [
+                    "> Connecting to OpenAI API...",
+                    "> Uplink Established (Latency: 120ms)",
+                    "> Context: Local File System",
+                    "> Sending Prompt...",
+                    "> Receiving Logic...",
+                    "> Executing on Localhost via AIOS Runtime.",
+                    "> Intelligence: Cloud | Body: Local."
+                ]
+            },
+            'deps': {
+                title: 'env_repair.js',
+                text: [
+                    "> Scanning project root...",
+                    "> DETECTED: Missing 'node_modules'",
+                    "> DETECTED: Python version mismatch (3.8 required)",
+                    "> Auto-Fixing...",
+                    "> Installing dependencies...",
+                    "> Updating PATH...",
+                    "> Environment Healthy. Ready to Build."
+                ]
+            }
+        };
+
+        function typeWriter(textArray, element) {
+            element.innerHTML = '';
+            let lineIndex = 0;
+            
+            function typeLine() {
+                if (lineIndex < textArray.length) {
+                    const line = document.createElement('div');
+                    line.className = 'mb-1';
+                    line.textContent = textArray[lineIndex];
+                    element.appendChild(line);
+                    lineIndex++;
+                    setTimeout(typeLine, 300); // Speed of typing
+                } else {
+                    const cursor = document.createElement('span');
+                    cursor.className = 'cursor-blink text-green-400';
+                    cursor.textContent = '_';
+                    element.appendChild(cursor);
+                }
+            }
+            typeLine();
+        }
+
+        function openModal(type) {
+            const content = contentMap[type];
+            modalTitle.textContent = content.title;
+            modal.classList.remove('hidden');
+            document.body.classList.add('no-scroll');
+            
+            // Animation
+            setTimeout(() => {
+                modalContent.classList.remove('scale-95', 'opacity-0');
+                modalContent.classList.add('scale-100', 'opacity-100');
+            }, 10);
+
+            // Start Typing Effect
+            typeWriter(content.text, modalText);
+        }
+
+        function closeModal() {
+            modalContent.classList.remove('scale-100', 'opacity-100');
+            modalContent.classList.add('scale-95', 'opacity-0');
+            setTimeout(() => {
+                modal.classList.add('hidden');
+                document.body.classList.remove('no-scroll');
+            }, 300);
+        }
+    </script>
 </body>
 </html>
